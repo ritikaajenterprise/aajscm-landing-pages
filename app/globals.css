@@ -1,0 +1,363 @@
+@import "tailwindcss";
+
+/* AAJ SCM Design System (migrated from the Lovable LP build)
+   Light, enterprise, high whitespace.
+   Primary #C22028 reserved for CTAs and highlights.
+   Body text #2C2C2C. Section bg #EEF0F2. Accent #FFD966 (minimal).
+   Tokens are HSL triplets consumed as hsl(var(--x)). */
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 17%; /* #2C2C2C */
+  --ink: 0 0% 12%; /* deeper ink for headings */
+
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 17%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 17%;
+
+  --primary: 357 71.7% 44.3%; /* #C22028 */
+  --primary-foreground: 0 0% 100%;
+  --primary-soft: 357 71.7% 96%; /* tint for highlights */
+
+  --secondary: 213 11% 94%; /* #EEF0F2 */
+  --secondary-foreground: 0 0% 17%;
+
+  --surface: 210 17% 98%; /* near-white alt surface */
+
+  --muted: 213 11% 94%;
+  --muted-foreground: 0 0% 38%;
+
+  --accent: 45 100% 70%; /* #FFD966 */
+  --accent-foreground: 0 0% 17%;
+
+  --destructive: 357 71.7% 44.3%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 357 71% 45%;
+
+  --radius: 0.75rem;
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-ink: hsl(var(--ink));
+  --color-surface: hsl(var(--surface));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-soft: hsl(var(--primary-soft));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-jakarta), var(--font-inter), system-ui, sans-serif;
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  /* Premium tokens */
+  --shadow-card: 0 1px 2px 0 hsl(0 0% 0% / 0.04), 0 8px 24px -8px hsl(0 0% 0% / 0.08);
+  --shadow-elevated: 0 2px 4px 0 hsl(0 0% 0% / 0.04), 0 24px 48px -16px hsl(0 0% 0% / 0.12);
+}
+
+@theme {
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from { height: 0; }
+    to { height: var(--radix-accordion-content-height); }
+  }
+  @keyframes accordion-up {
+    from { height: var(--radix-accordion-content-height); }
+    to { height: 0; }
+  }
+}
+
+/* v3 shadcn container behavior: centered, 2rem padding, capped at 1400px */
+@utility container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
+
+/* Offset hash-anchor scroll for the sticky 80px navbar */
+html {
+  scroll-padding-top: 96px;
+}
+[id] {
+  scroll-margin-top: 96px;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "ss01", "cv11";
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
+    color: hsl(var(--ink));
+    letter-spacing: -0.02em;
+  }
+  h1 { letter-spacing: -0.035em; }
+  h2 { letter-spacing: -0.03em; }
+}
+
+@layer utilities {
+  /* Marquee for client logo strip */
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .animate-marquee {
+    animation: marquee 90s linear infinite;
+  }
+  /* Faster variant used by the ecommerce LP's marketplace logo strip */
+  .animate-logo-marquee {
+    animation: marquee 45s linear infinite;
+    will-change: transform;
+  }
+
+  /* Ecommerce LP brand strip: each slot rolls one logo up and out, then the
+     next rolls in from below. Slots are staggered via animation-delay. */
+  @keyframes logo-roll-cycle {
+    0%   { transform: translateY(110%);  opacity: 0; }
+    10%  { transform: translateY(0);     opacity: 1; }
+    82%  { transform: translateY(0);     opacity: 1; }
+    94%  { transform: translateY(-110%); opacity: 0; }
+    100% { transform: translateY(-110%); opacity: 0; }
+  }
+  .animate-logo-roll {
+    animation: logo-roll-cycle 3.6s ease-in-out infinite both;
+  }
+}
+
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, hsl(var(--border) / 0.6) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--border) / 0.6) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* ============================================================
+   /ecommerce-fulfillment LP scope
+   ============================================================
+   The Lovable source for that page defines a wider radius scale than
+   Tailwind's default. Scoping it to the page root keeps `rounded-xl`,
+   `rounded-2xl` and `rounded-3xl` faithful there without shifting the
+   warehousing LP, which was ported against Tailwind's defaults. */
+.lp-ecom {
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+}
+
+/* ============================================================
+   Landing Page HubSpot Form styling
+   ============================================================ */
+.lp-hubspot-form .hs-form { font-family: inherit; color: hsl(var(--foreground)); }
+.lp-hubspot-form .hs-form fieldset { max-width: none !important; }
+.lp-hubspot-form .hs-form fieldset.form-columns-2 .hs-form-field { width: 50% !important; float: left; padding-right: 8px; box-sizing: border-box; }
+.lp-hubspot-form .hs-form fieldset.form-columns-2 .hs-form-field:last-child { padding-right: 0; padding-left: 8px; }
+.lp-hubspot-form .hs-form .hs-form-field { margin-bottom: 14px; }
+.lp-hubspot-form .hs-form label { font-size: 13px; font-weight: 600; color: hsl(var(--foreground)); display: block; margin-bottom: 6px; }
+.lp-hubspot-form .hs-form label .hs-form-required { color: hsl(var(--primary)); margin-left: 2px; }
+.lp-hubspot-form .hs-form input[type="text"],
+.lp-hubspot-form .hs-form input[type="email"],
+.lp-hubspot-form .hs-form input[type="tel"],
+.lp-hubspot-form .hs-form input[type="number"],
+.lp-hubspot-form .hs-form select,
+.lp-hubspot-form .hs-form textarea {
+  width: 100% !important; padding: 11px 14px; font-size: 14px;
+  color: hsl(var(--foreground)); background: hsl(var(--background));
+  border: 1px solid hsl(var(--border)); border-radius: 10px; outline: none;
+  transition: border-color .15s, box-shadow .15s; box-sizing: border-box; font-family: inherit;
+}
+.lp-hubspot-form .hs-form textarea { min-height: 110px; resize: vertical; }
+.lp-hubspot-form .hs-form input:focus,
+.lp-hubspot-form .hs-form select:focus,
+.lp-hubspot-form .hs-form textarea:focus {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.12);
+}
+.lp-hubspot-form .hs-form ::placeholder { color: hsl(var(--muted-foreground)); opacity: 1; }
+
+.lp-hubspot-form .hs-form .inputs-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.lp-hubspot-form .hs-form .inputs-list > li { margin: 0; }
+.lp-hubspot-form .hs-form .inputs-list label {
+  display: inline-flex; align-items: center; margin: 0;
+  padding: 7px 16px; border: 1px solid hsl(var(--primary) / 0.5);
+  color: hsl(var(--primary)); border-radius: 999px; font-size: 13px;
+  font-weight: 500; cursor: pointer; background: hsl(var(--background));
+  transition: all .15s;
+}
+.lp-hubspot-form .hs-form .inputs-list label:hover { background: hsl(var(--primary) / 0.06); }
+.lp-hubspot-form .hs-form .inputs-list input[type="checkbox"],
+.lp-hubspot-form .hs-form .inputs-list input[type="radio"] {
+  position: absolute; opacity: 0; pointer-events: none;
+}
+.lp-hubspot-form .hs-form .inputs-list label:has(input:checked) {
+  background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); border-color: hsl(var(--primary));
+}
+
+.lp-hubspot-form .hs-form .hs-submit { margin-top: 16px; }
+.lp-hubspot-form .hs-form .hs-button,
+.lp-hubspot-form .hs-form input[type="submit"] {
+  width: 100%; background: hsl(var(--primary)); color: hsl(var(--primary-foreground));
+  border: 0; border-radius: 12px; padding: 14px 20px; font-size: 15px;
+  font-weight: 700; cursor: pointer; transition: background .15s, transform .05s;
+  font-family: inherit; letter-spacing: 0.01em;
+}
+.lp-hubspot-form .hs-form .hs-button:hover,
+.lp-hubspot-form .hs-form input[type="submit"]:hover { background: hsl(var(--primary) / 0.92); }
+.lp-hubspot-form .hs-form .hs-button:active { transform: translateY(1px); }
+
+.lp-hubspot-form .hs-form .hs-error-msgs,
+.lp-hubspot-form .hs-form .hs-error-msg {
+  list-style: none; padding: 0; margin: 6px 0 0;
+  color: hsl(var(--primary)); font-size: 12px;
+}
+.lp-hubspot-form .hs-form fieldset::after { content: ""; display: table; clear: both; }
+
+/* ============================================================
+   Ecommerce LP HubSpot form styling
+   ------------------------------------------------------------
+   The ecommerce hero embeds a wider, grid-based form than the shared
+   `.lp-hubspot-form` treatment above, so it keeps its own scope.
+   ============================================================ */
+.hs-form-wrapper form { display: block; }
+.hs-form-wrapper .hs-form-field { margin-bottom: 0; }
+.hs-form-wrapper .hs-form-field > label {
+  display: block; margin-bottom: 0.25rem;
+  font-size: 0.8125rem; font-weight: 600; color: hsl(var(--ink));
+}
+.hs-form-wrapper .hs-form-field > label .hs-form-required { color: hsl(var(--primary)); }
+.hs-form-wrapper input[type="text"],
+.hs-form-wrapper input[type="email"],
+.hs-form-wrapper input[type="tel"],
+.hs-form-wrapper input[type="number"],
+.hs-form-wrapper select,
+.hs-form-wrapper textarea {
+  width: 100%;
+  border: 1px solid hsl(var(--input));
+  border-radius: var(--radius-md);
+  background: hsl(var(--background));
+  padding: 0.65rem 0.875rem;
+  font-size: 0.9375rem;
+  color: hsl(var(--foreground));
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.hs-form-wrapper textarea { min-height: 72px; resize: vertical; }
+.hs-form-wrapper input:focus,
+.hs-form-wrapper select:focus,
+.hs-form-wrapper textarea:focus {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.12);
+}
+.hs-form-wrapper .hs-error-msg,
+.hs-form-wrapper .hs-error-msgs label {
+  margin-top: 0.25rem; font-size: 0.75rem; color: hsl(var(--primary));
+}
+.hs-form-wrapper .hs-error-msgs { list-style: none; padding: 0; margin: 0; }
+.hs-form-wrapper .inputs-list {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem;
+}
+.hs-form-wrapper .inputs-list > li { margin: 0; }
+/* Pill-style choice chips */
+.hs-form-wrapper .inputs-list label {
+  display: inline-flex; align-items: center; cursor: pointer;
+  border: 1px solid hsl(var(--primary) / 0.45); border-radius: 9999px;
+  padding: 0.4rem 1rem; font-size: 0.85rem; font-weight: 500; line-height: 1.2;
+  color: hsl(var(--primary)); background: hsl(var(--background));
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.hs-form-wrapper .inputs-list label:hover {
+  background: hsl(var(--primary) / 0.06); border-color: hsl(var(--primary));
+}
+.hs-form-wrapper .inputs-list label:has(input:checked) {
+  background: hsl(var(--primary)); border-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+.hs-form-wrapper .inputs-list label:has(input:focus-visible) {
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.18);
+}
+.hs-form-wrapper .inputs-list label > span { margin: 0; }
+.hs-form-wrapper .inputs-list input[type="checkbox"],
+.hs-form-wrapper .inputs-list input[type="radio"] {
+  position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none;
+}
+.hs-form-wrapper input[type="checkbox"],
+.hs-form-wrapper input[type="radio"] {
+  accent-color: hsl(var(--primary)); width: 0.9rem; height: 0.9rem;
+}
+
+.hs-form-wrapper .hs-submit .actions { margin-top: 1.25rem; }
+.hs-form-wrapper input[type="submit"] {
+  width: 100%; cursor: pointer; border: 0; border-radius: var(--radius-md);
+  background: hsl(var(--primary)); padding: 0.8rem 1.25rem;
+  font-family: var(--font-display); font-size: 0.9375rem; font-weight: 600;
+  color: hsl(var(--primary-foreground)); transition: opacity 0.15s ease;
+}
+.hs-form-wrapper input[type="submit"]:hover { opacity: 0.9; }
+.hs-form-wrapper .hs-richtext,
+.hs-form-wrapper .legal-consent-container {
+  font-size: 0.75rem; line-height: 1.5; color: hsl(var(--muted-foreground));
+}
+
+.hs-form-wrapper fieldset {
+  max-width: none !important; width: 100% !important; float: none !important;
+  clear: both; display: grid; gap: 0.75rem; margin-bottom: 0.75rem;
+}
+.hs-form-wrapper fieldset.form-columns-2,
+.hs-form-wrapper fieldset.form-columns-3 { grid-template-columns: minmax(0, 1fr); }
+@media (width >= 640px) {
+  .hs-form-wrapper fieldset.form-columns-2,
+  .hs-form-wrapper fieldset.form-columns-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.hs-form-wrapper fieldset .hs-form-field {
+  width: 100% !important; float: none !important; padding: 0 !important;
+}
+/* Ensure single-column fields (e.g. Message) align with the two-column grid edges */
+.hs-form-wrapper fieldset.form-columns-1 .hs-form-field,
+.hs-form-wrapper fieldset.form-columns-1 .input,
+.hs-form-wrapper fieldset.form-columns-1 textarea,
+.hs-form-wrapper fieldset.form-columns-1 input {
+  width: 100% !important; max-width: none !important; box-sizing: border-box !important;
+}
+/* Pull the Message textarea right edge back a few pixels so it matches the Email/Phone inputs */
+@media (width >= 640px) {
+  .hs-form-wrapper .hs_message textarea,
+  .hs-form-wrapper fieldset.form-columns-1 .hs_message .input {
+    width: calc(100% - 4px) !important; margin-right: 4px !important;
+  }
+}
